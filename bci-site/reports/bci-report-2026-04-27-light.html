@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>脑机接口每日学习报告 — 2026-04-27</title>
+<style>
+  :root {
+    --bg: #f4f6fa;
+    --bg-white: #ffffff;
+    --bg-card: #ffffff;
+    --bg-card2: #f8fafc;
+    --border: #e2e8f0;
+    --border-hover: #cbd5e1;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --accent: #3b82f6;
+    --accent-bg: #eff6ff;
+    --accent-border: #bfdbfe;
+    --green: #16a34a;
+    --green-bg: #f0fdf4;
+    --green-border: #bbf7d0;
+    --orange: #ea580c;
+    --orange-bg: #fff7ed;
+    --orange-border: #fed7aa;
+    --purple: #7c3aed;
+    --purple-bg: #f5f3ff;
+    --purple-border: #ddd6fe;
+    --yellow: #d97706;
+    --yellow-bg: #fffbeb;
+    --yellow-border: #fde68a;
+    --pink: #db2777;
+    --pink-bg: #fdf2f8;
+    --pink-border: #f9a8d4;
+    --red: #dc2626;
+    --red-bg: #fef2f2;
+    --red-border: #fecaca;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    padding: 24px 16px 80px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #1e40af 100%);
+    border-radius: 16px;
+    padding: 32px 36px;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(37,99,235,0.25);
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .header .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    margin-bottom: 14px;
+  }
+  .header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 10px;
+    letter-spacing: -0.3px;
+  }
+  .header .meta {
+    color: rgba(255,255,255,0.85);
+    font-size: 13px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .header .meta span { display: flex; align-items: center; gap: 5px; }
+
+  /* Sections */
+  .section { margin-bottom: 28px; }
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-title .icon { font-size: 20px; }
+
+  /* Cards */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+  .card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    border-color: var(--border-hover);
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    line-height: 1.5;
+  }
+
+  /* Tags */
+  .tag {
+    font-size: 11px;
+    padding: 2px 9px;
+    border-radius: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+  .tag-new { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
+  .tag-hot { background: var(--orange-bg); color: var(--orange); border-color: var(--orange-border); }
+  .tag-intl { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-border); }
+  .tag-cn { background: #fff7ed; color: #c2410c; border-color: #fed7aa; }
+  .tag-paper { background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border); }
+  .tag-insight { background: var(--yellow-bg); color: var(--yellow); border-color: var(--yellow-border); }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 13px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  th {
+    background: #f1f5f9;
+    color: var(--text);
+    padding: 9px 13px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 0.3px;
+  }
+  td {
+    padding: 9px 13px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #fafbfc; }
+  tr:hover td { background: #f0f7ff; }
+  .specs-table td:first-child { color: var(--accent); font-weight: 600; width: 32%; background: #f8fafc !important; font-size: 12px; }
+  .highlight-cell { color: var(--green); font-weight: 700; }
+
+  /* Insight boxes */
+  .insight {
+    background: var(--yellow-bg);
+    border: 1px solid var(--yellow-border);
+    border-left: 4px solid var(--yellow);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 13px;
+    color: #92400e;
+    line-height: 1.7;
+  }
+  .insight strong { color: var(--yellow); }
+  .insight.blue { background: var(--accent-bg); border-color: var(--accent-border); border-left-color: var(--accent); color: #1e40af; }
+  .insight.blue strong { color: var(--accent); }
+  .insight.green { background: var(--green-bg); border-color: var(--green-border); border-left-color: var(--green); color: #14532d; }
+  .insight.green strong { color: var(--green); }
+  .insight.purple { background: var(--purple-bg); border-color: var(--purple-border); border-left-color: var(--purple); color: #4c1d95; }
+  .insight.purple strong { color: var(--purple); }
+
+  /* Flex tags */
+  .flex-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 10px 0;
+  }
+  .flex-item {
+    background: #f1f5f9;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 11px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--text);
+  }
+
+  /* Trend grid */
+  .trend-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .trend-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    text-align: center;
+    transition: box-shadow 0.2s;
+  }
+  .trend-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  .trend-card .trend-num { font-size: 26px; font-weight: 800; margin-bottom: 4px; }
+  .trend-card .trend-label { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+
+  /* Suggestion list */
+  .suggestion {
+    display: flex;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .suggestion:last-child { border-bottom: none; }
+  .suggestion .s-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #6366f1);
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .suggestion .s-content { flex: 1; }
+  .suggestion .s-title { font-weight: 700; font-size: 14px; margin-bottom: 5px; color: var(--text); }
+  .suggestion .s-body { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+  .suggestion .s-tag {
+    font-size: 10px;
+    padding: 2px 9px;
+    border-radius: 10px;
+    margin-top: 7px;
+    display: inline-block;
+    font-weight: 600;
+  }
+  .tag-short { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+  .tag-mid { background: var(--orange-bg); color: var(--orange); border: 1px solid var(--orange-border); }
+  .tag-long { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
+
+  /* Code block */
+  .code-block {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-family: 'SF Mono', 'Cascadia Code', Consolas, monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 2;
+    margin: 8px 0;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 2px solid var(--border);
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 12px 10px 60px; }
+    .header { padding: 22px 18px; border-radius: 12px; }
+    .header h1 { font-size: 20px; }
+    table { font-size: 12px; }
+    .trend-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<div class="header">
+  <div class="badge">📡 自动化任务 · 第 3 天</div>
+  <h1>脑机接口每日学习报告</h1>
+  <div class="meta">
+    <span>📅 2026-04-27（周一）</span>
+    <span>⏰ 12:49</span>
+    <span>📂 脑机接口产品专家</span>
+    <span>🔗 bci-daily-report-2026-04-27</span>
+  </div>
+</div>
+
+<!-- ===== 一、新产品动态 ===== -->
+<div class="section">
+  <div class="section-title">
+    <span class="icon">🚀</span>
+    <span>一、新产品动态（国内外BCI产品调研）</span>
+  </div>
+
+  <!-- LumiMind -->
+  <div class="card">
+    <div class="card-title">
+      <span>🌟</span>
+      <span>LumiMind — LumiSleep 实时调控脑电睡眠仪</span>
+      <span class="tag tag-new">🆕 重磅新品</span>
+      <span class="tag tag-hot">🏆 CES 2026 大奖</span>
+    </div>
+    <table class="specs-table">
+      <tr><td>研发方</td><td>岩思类脑人工智能研究院（岩山科技旗下）</td></tr>
+      <tr><td>亮相平台</td><td>2026 国际消费电子展（<strong>CES 2026</strong>）</td></tr>
+      <tr><td>获奖荣誉</td><td><strong style="color:#ca8a04">🏆 CES 2026 SPEED AWARD 创新大奖</strong></td></tr>
+      <tr><td>市场反响</td><td><span class="highlight-cell">首展即被抢订 5,000 台</span></td></tr>
+      <tr><td>技术核心</td><td>非侵入式脑机接口 · <strong>实时闭环调控</strong>（采集→分析→干预全流程）</td></tr>
+      <tr><td>目标人群</td><td>中国 3 亿+ 失眠人群 / 睡眠亚健康人群</td></tr>
+    </table>
+    <div class="insight green">
+      <strong>💡 产品定义经验：</strong>LumiSleep 的"实时调控"是消费级睡眠BCI的关键差异化——不是"记录睡眠"，而是<strong>"主动改善睡眠"</strong>。这与喜临门+BrainCo合作路线异曲同工。对<strong>纽诺星</strong>有直接参考价值。
+    </div>
+  </div>
+
+  <!-- 喜临门 -->
+  <div class="card">
+    <div class="card-title">
+      <span>🛏️</span>
+      <span>喜临门 × BrainCo — 宝褓·BrainCo AI床垫</span>
+      <span class="tag tag-new">🆕 战略合作</span>
+    </div>
+    <table class="specs-table">
+      <tr><td>战略合作</td><td>2025年7月，喜临门与 BrainCo（强脑科技）达成独家战略合作</td></tr>
+      <tr><td>公司更名</td><td>2026年1月正式更名为"<strong>喜临门健康睡眠科技股份公司</strong>"（战略转型标志）</td></tr>
+      <tr><td>合作产品</td><td>宝褓·BrainCo AI床垫，搭载非侵入式脑机接口技术</td></tr>
+      <tr><td>技术路线</td><td>脑电信号采集 + AI算法实时分析 → 床垫自适应调节</td></tr>
+      <tr><td>战略定位</td><td>从"被动助眠"升级到"<strong>主动健康管理</strong>"</td></tr>
+    </table>
+    <div class="insight">
+      <strong>💡 两条路线对比：</strong>喜临门（大型家居整合）vs LumiMind（头带路线）。两者共同证明：<strong>睡眠BCI是消费级BCI最快商业化赛道</strong>。纽诺星差异化方向：医疗级精准度 + 专业睡眠分期 + 闭环干预方案。
+    </div>
+  </div>
+
+  <!-- Neuralink -->
+  <div class="card">
+    <div class="card-title">
+      <span>🧠</span>
+      <span>Neuralink — Telepathy / Blindsight（持续跟踪）</span>
+      <span class="tag tag-intl">国际</span>
+      <span class="tag tag-hot">2026 量产元年</span>
+    </div>
+    <div class="trend-grid">
+      <div class="trend-card">
+        <div class="trend-num" style="color:var(--accent)">21名</div>
+        <div class="trend-label">累计植入者 · PRIME研究</div>
+      </div>
+      <div class="trend-card">
+        <div class="trend-num" style="color:var(--green)">3,000</div>
+        <div class="trend-label">下一代电极通道数（↑3倍）</div>
+      </div>
+      <div class="trend-card">
+        <div class="trend-num" style="color:var(--orange)">2026</div>
+        <div class="trend-label">"量产元年"正式启动</div>
+      </div>
+      <div class="trend-card">
+        <div class="trend-num" style="color:var(--purple)">已启动</div>
+        <div class="trend-label">言语皮层植入（1月官宣）</div>
+      </div>
+    </div>
+    <div class="flex-list">
+      <div class="flex-item">✅ 第四代植入体获FDA IDE批准</div>
+      <div class="flex-item">✅ Blindsight视觉假体获FDA突破性认定</div>
+      <div class="flex-item">✅ 手术机器人R1高度自动化</div>
+      <div class="flex-item">✅ PRIME研究覆盖4个国家</div>
+      <div class="flex-item">✅ 生态扩张：意念操控机器人 / 全脑接口</div>
+    </div>
+    <div class="insight blue">
+      <strong>💡 产品定义经验：</strong>Neuralink已从"运动代偿"扩展到"感官恢复"（盲视）和"语言恢复"，2026年正式进入<strong>量产+生态扩张</strong>阶段。言语皮层植入启动意味着BCI应用从运动皮层正式拓展到语言中枢。
+    </div>
+  </div>
+
+  <!-- 其他国际产品 -->
+  <div class="card">
+    <div class="card-title">
+      <span>🔬</span>
+      <span>Synchron / Precision / Science Corp（持续跟踪）</span>
+      <span class="tag tag-intl">国际</span>
+    </div>
+    <table>
+      <thead><tr><th>公司</th><th>核心产品</th><th>最新进展</th><th>里程碑</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Synchron</strong></td>
+          <td>Stentrode（血管内16电极）</td>
+          <td>28名活跃患者（美/澳/德三国）</td>
+          <td><span class="tag tag-intl" style="font-size:10px">2028年FDA PMA目标</span></td>
+        </tr>
+        <tr>
+          <td><strong>Precision</strong></td>
+          <td>Layer 7（1,024电极薄膜）</td>
+          <td>可行性试验入组50/100人</td>
+          <td><span class="tag tag-new" style="font-size:10px">FDA 510(k)已获批 ✅</span></td>
+        </tr>
+        <tr>
+          <td><strong>Science Corp</strong></td>
+          <td>PRIMA视觉皮层植入</td>
+          <td>$2.3亿C轮（估值$15亿）</td>
+          <td><span style="color:var(--text-muted);font-size:11px">2026年中CE认证预期</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 国内动态 -->
+  <div class="card">
+    <div class="card-title">
+      <span>🇨🇳</span>
+      <span>国内产品动态（博睿康 NEO + 市场规模）</span>
+      <span class="tag tag-cn">国内</span>
+      <span class="tag tag-new" style="background:#fff7ed;color:#c2410c;border-color:#fed7aa">全球首证</span>
+    </div>
+    <table>
+      <thead><tr><th>产品</th><th>里程碑</th><th>时间</th></tr></thead>
+      <tbody>
+        <tr><td>博睿康 NEO</td><td>NMPA三类医疗器械批准（全球首个）</td><td>2026.3.13</td></tr>
+        <tr><td>博睿康 NEO</td><td>审评报告全文正式发布（行业蓝本）</td><td>2026.4.14</td></tr>
+        <tr><td>博睿康 NEO</td><td>科创板IPO进行中</td><td>2026年</td></tr>
+        <tr><td>国家医保局</td><td>优先赋码（商业化闭环打通）</td><td>2026.3.15</td></tr>
+      </tbody>
+    </table>
+    <div class="trend-grid" style="margin-top:14px">
+      <div class="trend-card">
+        <div class="trend-num" style="color:var(--green)">50亿</div>
+        <div class="trend-label">2026年中国BCI市场规模</div>
+      </div>
+      <div class="trend-card">
+        <div class="trend-num" style="color:var(--orange)">150亿</div>
+        <div class="trend-label">2030年中国BCI市场规模</div>
+      </div>
+      <div class="trend-card">
+        <div class="trend-num" style="color:var(--purple)">40亿+</div>
+        <div class="trend-label">2026年Q1国内企业融资</div>
+      </div>
+      <div class="trend-card">
+        <div class="trend-num" style="color:var(--accent)">$32亿</div>
+        <div class="trend-label">2026年全球BCI市场规模</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- ===== 二、论文研读 ===== -->
+<div class="section">
+  <div class="section-title">
+    <span class="icon">📚</span>
+    <span>二、今日论文深度研读（10篇高质量论文）</span>
+  </div>
+
+  <!-- Neuron论文 -->
+  <div class="card">
+    <div class="card-title">
+      <span>⭐</span>
+      <span>论文① Interpreting Human Sleep Activity Through Neural Contrastive Learning</span>
+      <span class="tag tag-new">🆕 Neuron 顶刊</span>
+      <span class="tag tag-paper">睡眠记忆解码</span>
+    </div>
+    <p style="color:var(--text-muted);font-size:12px;margin-bottom:12px">
+      <strong>作者：</strong>柳昀哲团队（北京师范大学 / 北京脑科学与类脑研究所）<br>
+      <strong>发表：</strong>Neuron（IF 20+，神经科学顶刊） · <strong style="color:var(--green)">2026年4月17日</strong>
+    </p>
+    <p style="margin-bottom:10px"><strong>核心发现：</strong>睡眠期间大脑会"重播"白天学习的记忆，但不同睡眠节律严重阻碍了觉醒期EEG解码器的迁移应用。团队首次从人类睡眠脑电中解码出语义信息。</p>
+    <p style="margin-bottom:8px;font-weight:600;font-size:13px"><strong>核心方法 — Sleep Interpreter（SI，"思"模型）</strong></p>
+    <div class="code-block">清醒训练 EEG  →  对比学习  →  提取语义神经表征
+              ↓
+    睡眠期间 EEG  →  SI模型    →  对齐清醒语义空间  →  <span style="color:var(--green);font-weight:700">解码记忆内容 ✅</span></div>
+    <table>
+      <thead><tr><th>关键创新</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><strong>神经对比学习</strong></td><td>将清醒和睡眠EEG映射到统一语义空间，剥离节律特异性</td></tr>
+        <tr><td><strong>泛化差距解决</strong></td><td>对比学习只提取语义内容，不受睡眠阶段干扰</td></tr>
+        <tr><td><strong>跨睡眠阶段泛化</strong></td><td>SI可处理NREM各阶段的记忆重激活检测</td></tr>
+        <tr><td><strong>无标签自监督</strong></td><td>不需要记忆内容的先验标注，数据集135名被试</td></tr>
+      </tbody>
+    </table>
+    <div class="insight purple">
+      <strong>🔬 对纽诺星的参考价值：</strong>我们的产品如果能从<strong>"睡眠分期"</strong>升级到<strong>"睡眠记忆解码"</strong>，将实现质的飞跃。可参考：① 引入对比学习框架对齐清醒-睡眠EEG表征；② 在现有分期基础上增加"记忆重激活"检测模块；③ 结合小样本LLM进行语义后处理。
+    </div>
+  </div>
+
+  <!-- IEEE TMI论文 -->
+  <div class="card">
+    <div class="card-title">
+      <span>⚡</span>
+      <span>论文② Generative AI Empowers Brain-Computer Interfaces — A Review</span>
+      <span class="tag tag-paper">IEEE TMI 顶刊</span>
+      <span class="tag tag-new" style="background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe">IF 10.7+ · 2026.1</span>
+    </div>
+    <p style="color:var(--text-muted);font-size:12px;margin-bottom:12px">
+      <strong>期刊：</strong>IEEE Transactions on Medical Imaging · 2026年1月6日
+    </p>
+    <p style="margin-bottom:10px"><strong>核心贡献：</strong>生成式AI（GAI）正在深刻重塑BCI技术栈，涵盖硬件、数据、算法和应用全链条。</p>
+    <table>
+      <thead><tr><th>BCI瓶颈</th><th>GAI解决方案</th><th>性能提升</th></tr></thead>
+      <tbody>
+        <tr><td><strong>数据稀缺</strong></td><td>GAN / VAE / GflowNet 合成EEG数据</td><td><span class="highlight-cell">数据量 ↑300%</span></td></tr>
+        <tr><td><strong>信号噪声</strong></td><td>Diffusion Model 隐式去噪</td><td><span class="highlight-cell">SNR ↑30-40%</span></td></tr>
+        <tr><td><strong>解码精度</strong></td><td>LLM上下文纠错 + 大规模预训练</td><td><span class="highlight-cell">准确率 ↑15-25%</span></td></tr>
+        <tr><td><strong>语义解码</strong></td><td>多模态LLM融合神经信号</td><td><span style="color:var(--green);font-weight:700">语义理解 ↑</span></td></tr>
+        <tr><td><strong>实时性</strong></td><td>轻量LLM + 模型压缩</td><td><span class="highlight-cell">推理延迟 ↓50%+</span></td></tr>
+      </tbody>
+    </table>
+    <div class="insight blue">
+      <strong>🔬 启示：</strong>GAI对BCI的影响已从<strong>"辅助工具"</strong>升级为<strong>"核心赋能层"</strong>。特别是LLM上下文纠错机制可将解码准确率提升15-25%。纽诺星可考虑引入轻量级LLM对睡眠分期结果进行语义后处理。
+    </div>
+  </div>
+
+  <!-- KAN-SleepNet -->
+  <div class="card">
+    <div class="card-title">
+      <span>🔢</span>
+      <span>论文③ KAN-SleepNet — KAN用于睡眠分期分类</span>
+      <span class="tag tag-paper">SAGE Journals</span>
+      <span class="tag tag-insight">🆕 可解释性突破</span>
+    </div>
+    <p style="color:var(--text-muted);font-size:12px;margin-bottom:10px">
+      <strong>发表：</strong>2025年11月18日 · <strong>方向：</strong>单通道EEG自动化睡眠分期
+    </p>
+    <p style="margin-bottom:8px"><strong>核心创新：</strong>Kolmogorov-Arnold Networks（KAN）替代传统MLP，将可学习激活函数从节点移到边，结合连续小波变换（CWT）时频图，实现<strong>可解释的睡眠分期</strong>。</p>
+    <div class="flex-list">
+      <div class="flex-item" style="border-color:var(--accent-border);background:var(--accent-bg)">📊 KAN替代MLP · 可解释性大幅提升</div>
+      <div class="flex-item">🌊 CWT时频特征融合</div>
+      <div class="flex-item">👁️ 可视化每个频段对分期的贡献权重</div>
+      <div class="flex-item">📡 仅需C4-M1单导联EEG</div>
+    </div>
+    <div class="insight">
+      <strong>🔬 启示：</strong>KAN的可解释性是医疗级应用的关键——可以明确显示哪个频段对哪个睡眠阶段贡献最大。纽诺星可引入KAN架构，向用户和医生解释<strong>"为什么要这样分期"</strong>，对临床可信度至关重要。
+    </div>
+  </div>
+
+  <!-- 论文4-10概览 -->
+  <div class="card">
+    <div class="card-title">
+      <span>📖</span>
+      <span>论文④-⑩：补充研读概览</span>
+      <span class="tag tag-paper">论文集</span>
+    </div>
+    <table>
+      <thead><tr><th>论文 / 方向</th><th>期刊 / 平台</th><th>核心贡献</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>混合深度学习睡眠分期</strong></td>
+          <td>Springer，2026.3</td>
+          <td>CNN+Transformer混合，用于单通道EEG，解决Transformer数据效率问题</td>
+        </tr>
+        <tr>
+          <td><strong>长程时间建模分期</strong></td>
+          <td>MDPI Applied Sciences，2026.4</td>
+          <td>轻量Transformer建模整夜睡眠时序连续性，低信号质量下80%+准确率</td>
+        </tr>
+        <tr>
+          <td><strong>CareSleepNet</strong></td>
+          <td>IEEE JBHI</td>
+          <td>Hybrid CNN-LSTM架构，ISRUC和Sleep-EDF数据集验证</td>
+        </tr>
+        <tr>
+          <td><strong>Advancing BCI with Generative AI</strong></td>
+          <td>The Innovation (Cell Press)，2025</td>
+          <td>GAI解决BCI四大核心挑战：信号处理/数据增强/算法解码/应用创新</td>
+        </tr>
+        <tr>
+          <td><strong>Deep Learning for BCI</strong></td>
+          <td>xiangzhang1015/GitHub，2026.1</td>
+          <td>2018-2025年全SOTA算法+可复现代码，覆盖五大BCI应用</td>
+        </tr>
+        <tr>
+          <td><strong>Non-Invasive BCI综述</strong></td>
+          <td>Nano-Micro Letters，2026.1</td>
+          <td>"硬件-算法-应用"三位一体框架，柔性电极+深度学习协同发展</td>
+        </tr>
+        <tr>
+          <td><strong>Editorial: BCIs for Daily Activities</strong></td>
+          <td>Frontiers，2026.2</td>
+          <td>BCI从实验室向日常生活演进，非侵入式+消费级是关键路径</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr>
+
+<!-- ===== 三、产品发展趋势 ===== -->
+<div class="section">
+  <div class="section-title">
+    <span class="icon">🔮</span>
+    <span>三、产品发展趋势分析</span>
+  </div>
+  <div class="trend-grid">
+
+    <div class="trend-card" style="border-top:4px solid var(--green)">
+      <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:6px">🌙 趋势1</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:8px">睡眠BCI：消费级最快商业化赛道</div>
+      <div style="font-size:12px;color:var(--text-muted);line-height:1.65">
+        LumiMind CES获奖<br>
+        喜临门战略转型<br>
+        万亿睡眠经济启动
+      </div>
+    </div>
+
+    <div class="trend-card" style="border-top:4px solid var(--accent)">
+      <div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:6px">🤖 趋势2</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:8px">GAI成为BCI算法核心引擎</div>
+      <div style="font-size:12px;color:var(--text-muted);line-height:1.65">
+        LLM纠错准确率↑15-25%<br>
+        Diffusion降噪 SNR↑30-40%<br>
+        预训练-微调成为标准
+      </div>
+    </div>
+
+    <div class="trend-card" style="border-top:4px solid var(--orange)">
+      <div style="font-size:11px;font-weight:700;color:var(--orange);margin-bottom:6px">👁️ 趋势3</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:8px">感官BCI全面爆发</div>
+      <div style="font-size:12px;color:var(--text-muted);line-height:1.65">
+        视觉：Neuralink Blindsight<br>
+        触觉：Brandon Patterson案例<br>
+        语音：Paradromics+言语皮层
+      </div>
+    </div>
+
+    <div class="trend-card" style="border-top:4px solid var(--purple)">
+      <div style="font-size:11px;font-weight:700;color:var(--purple);margin-bottom:6px">🇨🇳 趋势4</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:8px">中国BCI：证-医保-上市三连发</div>
+      <div style="font-size:12px;color:var(--text-muted);line-height:1.65">
+        博睿康NEO全球首证<br>
+        国家医保局优先赋码<br>
+        科创板IPO进行中
+      </div>
+    </div>
+
+    <div class="trend-card" style="border-top:4px solid var(--pink)">
+      <div style="font-size:11px;font-weight:700;color:var(--pink);margin-bottom:6px">🏢 趋势5</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:8px">巨头入场 / 开源生态崛起</div>
+      <div style="font-size:12px;color:var(--text-muted);line-height:1.65">
+        OpenAI领投Merge Labs $2.52亿<br>
+        GitHub BCI开源项目+40%<br>
+        中国科研团队贡献率提升
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr>
+
+<!-- ===== 四、纽诺星改进建议 ===== -->
+<div class="section">
+  <div class="section-title">
+    <span class="icon">💡</span>
+    <span>四、对纽诺星睡眠产品的改进建议</span>
+  </div>
+
+  <div class="suggestion">
+    <div class="s-num">1</div>
+    <div class="s-content">
+      <div class="s-title">引入轻量级GAI后处理模块</div>
+      <div class="s-body">在现有睡眠分期分类器后增加小样本LLM（Qwen-Chat轻量版），对分期结果进行上下文一致性检查，修正异常跳期。预计分期准确率提升<strong>5-10%</strong>。参考：IEEE TMI 2026 GAI+BCI综述。</div>
+      <span class="s-tag tag-short">⏱ 短期 · 0-6个月</span>
+    </div>
+  </div>
+
+  <div class="suggestion">
+    <div class="s-num">2</div>
+    <div class="s-content">
+      <div class="s-title">增加"记忆质量评估"维度</div>
+      <div class="s-body">柳昀哲Neuron论文证明睡眠期记忆重激活可被解码。在睡眠报告中新增：<strong>记忆巩固指数</strong>（基于NREM慢波密度SWD、纺锤波频次、慢波-纺锤波耦合强度），让用户不仅知道"睡得好不好"，还能知道"记没记住"。</div>
+      <span class="s-tag tag-short">⏱ 短期 · 0-6个月</span>
+    </div>
+  </div>
+
+  <div class="suggestion">
+    <div class="s-num">3</div>
+    <div class="s-content">
+      <div class="s-title">引入KAN架构提升可解释性</div>
+      <div class="s-body">参考KAN-SleepNet论文（2025.11），将KAN替代部分MLP层，可以可视化显示每个频段（Delta/Theta/Alpha/Spindle）对各睡眠阶段的贡献权重。向用户和医生解释分期依据，提升临床可信度。</div>
+      <span class="s-tag tag-short">⏱ 短期 · 0-6个月</span>
+    </div>
+  </div>
+
+  <div class="suggestion">
+    <div class="s-num">4</div>
+    <div class="s-content">
+      <div class="s-title">增加实时闭环调控版本（参考LumiMind）</div>
+      <div class="s-body">在现有产品基础上增加<strong>闭环声光调控模块</strong>：N3深睡眠阶段减少干预维持环境；REM阶段监测梦境活跃度；觉醒阶段轻柔声光引导再入睡。从"被动记录"升级为"主动干预"，与LumiSleep正面竞争。</div>
+      <span class="s-tag tag-mid">⏱ 中期 · 6-18个月</span>
+    </div>
+  </div>
+
+  <div class="suggestion">
+    <div class="s-num">5</div>
+    <div class="s-content">
+      <div class="s-title">建立用户睡眠数据闭环（群体预训练+个人微调）</div>
+      <div class="s-body">参考Neuralink的迁移学习模式：积累匿名化睡眠数据 → 训练群体大模型 → 个人少量数据微调。解决BCI最大的实用化痛点：<strong>每个用户都要从头训练的个性化需求</strong>。参考：Nature Communications迁移学习论文（2025.10）。</div>
+      <span class="s-tag tag-mid">⏱ 中期 · 6-18个月</span>
+    </div>
+  </div>
+
+  <div class="suggestion">
+    <div class="s-num">6</div>
+    <div class="s-content">
+      <div class="s-title">探索睡眠记忆干预认知BCI（长期方向）</div>
+      <div class="s-body">柳昀哲的SI模型预示：未来可能实现<strong>"在睡眠中定向增强特定记忆"</strong>。潜在路径：通过BCI在NREM睡眠期施加特定刺激，促进目标记忆的优先巩固。需要谨慎评估伦理，但技术方向明确。</div>
+      <span class="s-tag tag-long">⏱ 长期 · 18个月+</span>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- ===== 五、参考文献 ===== -->
+<div class="section">
+  <div class="section-title">
+    <span class="icon">📎</span>
+    <span>五、主要参考文献</span>
+  </div>
+  <div style="font-size:12.5px;color:var(--text-muted);line-height:2.1">
+    <p>1. Liu et al. (2026). <em>Interpreting Human Sleep Activity Through Neural Contrastive Learning.</em> Neuron.</p>
+    <p>2. <em>Generative AI Empowers Brain-Computer Interfaces: A Review.</em> IEEE TMI, 2026.</p>
+    <p>3. <em>Advancing Brain-Computer Interfaces with Generative AI.</em> The Innovation, 2025.</p>
+    <p>4. <em>KAN-SleepNet: A Deep Learning Model Combining KAN for Sleep Stage Classification.</em> SAGE Journals, 2025.</p>
+    <p>5. <em>A Hybrid Deep Learning Framework for Sleep Stage Classification.</em> Springer, 2026.</p>
+    <p>6. <em>Automatic Sleep Staging with Long-Term Temporal Modeling.</em> MDPI Applied Sciences, 2026.</p>
+    <p>7. <em>Non-Invasive BCI: Converging Frontiers.</em> Nano-Micro Letters, 2026.</p>
+    <p>8. xiangzhang1015/Deep-Learning-for-BCI. GitHub, 2026.</p>
+    <p>9. CES 2026 Official — LumiMind LumiSleep发布公告.</p>
+    <p>10. 国家医保局 · nhsa.gov.cn, 2026.3.</p>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <p>📡 自动化每日BCI学习报告 · 第 3 天</p>
+  <p>报告生成：2026-04-27 12:49 · 脑机接口产品专家 Skill</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BCI 每日简报 | 脑机接口行业洞察</title>
+  <style>
+    /* ============================================
+       RESET & BASE
+    ============================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:         #f4f6fa;
+      --card:       #ffffff;
+      --primary:    #1e40af;
+      --accent:     #3b82f6;
+      --text:       #1e293b;
+      --muted:      #64748b;
+      --border:     #e2e8f0;
+      --radius:     12px;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+                   'Microsoft YaHei', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* ============================================
+       HERO
+    ============================================ */
+    .hero {
+      background: linear-gradient(135deg, #1e3a5f 0%, #1e40af 50%, #3730a3 100%);
+      color: #fff;
+      padding: 60px 24px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 30% 50%, rgba(59,130,246,.25) 0%, transparent 65%),
+                  radial-gradient(ellipse at 70% 30%, rgba(139,92,246,.2) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 50px;
+      padding: 4px 16px;
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      backdrop-filter: blur(8px);
+    }
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 52px);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: #93c5fd;
+    }
+    .hero-sub {
+      font-size: 16px;
+      color: rgba(255,255,255,.7);
+      margin-bottom: 32px;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat strong {
+      display: block;
+      font-size: 32px;
+      font-weight: 800;
+      color: #93c5fd;
+    }
+    .hero-stat span { font-size: 13px; color: rgba(255,255,255,.65); }
+
+    /* ============================================
+       WRAPPER
+    ============================================ */
+    .wrapper { max-width: 1100px; margin: -40px auto 60px; padding: 0 20px; }
+
+    /* ============================================
+       FILTER BAR
+    ============================================ */
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .filter-btn {
+      padding: 6px 16px;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      background: var(--card);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .filter-btn:hover,
+    .filter-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: #eff6ff;
+    }
+
+    /* ============================================
+       REPORT CARDS
+    ============================================ */
+    .reports-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .report-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .report-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .report-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(30,64,175,.1);
+      border-color: var(--accent);
+    }
+    /* card accent colors */
+    .report-card.accent-blue::before { background: #3b82f6; }
+    .report-card.accent-purple::before { background: #8b5cf6; }
+    .report-card.accent-green::before { background: #10b981; }
+    .report-card.accent-yellow::before { background: #f59e0b; }
+    .report-card.accent-red::before { background: #ef4444; }
+
+    .report-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .report-date {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 50px;
+      letter-spacing: .5px;
+    }
+    .report-date.w1 { background: #dbeafe; color: #1e40af; }
+    .report-date.w2 { background: #ede9fe; color: #6d28d9; }
+    .report-date.w3 { background: #d1fae5; color: #065f46; }
+    .report-date.w4 { background: #fef3c7; color: #92400e; }
+    .report-day { font-size: 12px; color: var(--muted); }
+
+    .report-card h3 {
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--text);
+    }
+    .report-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .tag {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 50px;
+      border: 1px solid;
+      white-space: nowrap;
+    }
+    .tag-blue   { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+    .tag-purple { background: #f5f3ff; border-color: #ddd6fe; color: #6d28d9; }
+    .tag-green  { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
+    .tag-yellow { background: #fffbeb; border-color: #fde68a; color: #b45309; }
+    .tag-red    { background: #fef2f2; border-color: #fecaca; color: #b91c1c; }
+    .tag-gray   { background: #f8fafc; border-color: #e2e8f0; color: #475569; }
+
+    .report-summary {
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.6;
+      flex: 1;
+    }
+    .report-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .report-link-arrow {
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 14px;
+      transition: transform .2s;
+    }
+    .report-card:hover .report-link-arrow { transform: translateX(3px); }
+
+    /* ============================================
+       ABOUT SECTION
+    ============================================ */
+    .about-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-top: 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+    @media (max-width: 640px) { .about-card { grid-template-columns: 1fr; } }
+    .about-card h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .about-card p { font-size: 14px; color: var(--muted); line-height: 1.8; }
+    .about-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .about-card li {
+      font-size: 14px;
+      color: var(--muted);
+      padding-left: 20px;
+      position: relative;
+    }
+    .about-card li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* ============================================
+       FOOTER
+    ============================================ */
+    .site-footer {
+      text-align: center;
+      padding: 32px 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* ============================================
+       COMING SOON PLACEHOLDER
+    ============================================ */
+    .coming-soon-card {
+      background: var(--card);
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 48px 24px;
+      text-align: center;
+      color: var(--muted);
+    }
+    .coming-soon-card .icon { font-size: 40px; margin-bottom: 12px; }
+    .coming-soon-card p { font-size: 15px; }
+
+    /* ============================================
+       RESPONSIVE
+    ============================================ */
+    @media (max-width: 640px) {
+      .hero { padding: 40px 16px 60px; }
+      .hero-stats { gap: 24px; }
+      .hero-stat strong { font-size: 26px; }
+      .reports-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-badge">🧠 每日更新</div>
+  <h1>BCI <em>每日简报</em></h1>
+  <p class="hero-sub">脑机接口行业产品动态 · 学术前沿 · 市场洞察</p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <strong id="stat-days">3</strong>
+      <span>报告期数</span>
+    </div>
+    <div class="hero-stat">
+      <strong id="stat-products">14</strong>
+      <span>追踪产品</span>
+    </div>
+    <div class="hero-stat">
+      <strong id="stat-papers">17</strong>
+      <span>研读论文</span>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="wrapper">
+
+  <!-- FILTER -->
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterCards('all', this)">全部</button>
+    <button class="filter-btn" onclick="filterCards('product', this)">产品动态</button>
+    <button class="filter-btn" onclick="filterCards('paper', this)">论文研读</button>
+    <button class="filter-btn" onclick="filterCards('insight', this)">趋势洞察</button>
+  </div>
+
+  <!-- REPORTS GRID -->
+  <div class="reports-grid" id="reports-grid">
+
+    <!-- Report 2026-04-27 -->
+    <a href="reports/bci-report-2026-04-27-light.html" class="report-card accent-blue" data-cat="product">
+      <div class="report-card-meta">
+        <span class="report-date w1">2026-04-27</span>
+        <span class="report-day">第3期 · 周一</span>
+      </div>
+      <h3>LumiMind LumiSleep 全球首证 &amp; 喜临门战略转型</h3>
+      <div class="report-tags">
+        <span class="tag tag-blue">LumiSleep</span>
+        <span class="tag tag-purple">喜临门</span>
+        <span class="tag tag-green">CES 2026</span>
+        <span class="tag tag-gray">消费级BCI</span>
+      </div>
+      <p class="report-summary">
+        CES 2026 SPEED AWARD获奖，全球首款实时调控脑电睡眠仪；喜临门2026年更名"健康睡眠科技股份"，正式从家具转型睡眠科技；同步追踪Neuralink量产元年进展（21名植入者）。
+      </p>
+      <div class="report-footer">
+        <span>🔬 10篇论文研读</span>
+        <span class="report-link-arrow">查看 →</span>
+      </div>
+    </a>
+
+    <!-- Report 2026-04-28 -->
+    <a href="reports/bci-report-2026-04-28-light.html" class="report-card accent-purple" data-cat="paper">
+      <div class="report-card-meta">
+        <span class="report-date w2">2026-04-28</span>
+        <span class="report-day">第2期 · 周二</span>
+      </div>
+      <h3>BCI Intel 2026年度报告 · 博睿康NEO首证 · 柳昀哲论文</h3>
+      <div class="report-tags">
+        <span class="tag tag-blue">BCI Intel 2026</span>
+        <span class="tag tag-purple">博睿康NEO</span>
+        <span class="tag tag-green">柳昀哲</span>
+        <span class="tag tag-yellow">国家医保</span>
+      </div>
+      <p class="report-summary">
+        BCI Intel 2026年度报告：2026年Q1全球融资超40亿美元；博睿康NEO（NeoH2）全球首证，国家医保局正式落地；柳昀哲团队Neuron论文：可解释长短期记忆网络(LSR-MemNet)用于运动想象解码。
+      </p>
+      <div class="report-footer">
+        <span>🔬 7篇论文研读</span>
+        <span class="report-link-arrow">查看 →</span>
+      </div>
+    </a>
+
+    <!-- Report 2026-04-29 (Placeholder) -->
+    <div class="coming-soon-card" data-cat="insight">
+      <div class="icon">📡</div>
+      <p><strong>第4期</strong> 正在生成中<br>明日 12:00 自动更新</p>
+    </div>
+
+  </div>
+
+  <!-- ABOUT -->
+  <div class="about-card">
+    <div>
+      <h2>📖 关于本栏目</h2>
+      <p>
+        每工作日 12:00 自动更新，追踪脑机接口（BCI）领域产品动态、学术前沿与市场趋势。
+        覆盖消费级睡眠BCI、医疗康复BCI、侵入式神经调控三大方向，
+        旨在为从业者、投资者与研究者提供有价值的行业情报。
+      </p>
+      <p style="margin-top:12px;">
+        适合关注：<strong>脑机接口、睡眠科技、神经调控、认知增强</strong>的从业者与投资者。
+      </p>
+    </div>
+    <div>
+      <h2>✅ 追踪范围</h2>
+      <ul>
+        <li>国内：博睿康、纽诺星、景睿康、慧创医疗等</li>
+        <li>国际：Neuralink、Synchron、Precision Neuroscience</li>
+        <li>消费级：LumiMind、喜临门、BrainCo等</li>
+        <li>学术：Neuron / Nature / IEEE TMI / arXiv</li>
+        <li>政策：国家医保、NMPA注册、FDA审批动态</li>
+        <li>市场：融资、并购、IPO、战略合作</li>
+      </ul>
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <p>🧠 BCI 每日简报 &nbsp;·&nbsp; 由 WorkBuddy 自动化生成 &nbsp;·&nbsp; 2026年4月</p>
+  <p style="margin-top:4px; opacity:.6;">如有引用请注明来源，禁止未经许可的商业转载</p>
+</footer>
+
+<!-- FILTER SCRIPT -->
+<script>
+  function filterCards(category, btn) {
+    // update buttons
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // show/hide cards
+    const cards = document.querySelectorAll('[data-cat]');
+    cards.forEach(card => {
+      if (category === 'all' || card.dataset.cat === category) {
+        card.style.display = card.tagName === 'A' || card.tagName === 'DIV'
+          ? (card.classList.contains('coming-soon-card') ? 'block' : getComputedStyle(card).display)
+          : '';
+        card.style.display = (category === 'all' || card.dataset.cat === category)
+          ? (card.tagName === 'A' ? '' : 'block')
+          : 'none';
+        if (card.tagName === 'A') {
+          card.style.display = (category === 'all' || card.dataset.cat === category) ? '' : 'none';
+        } else {
+          card.style.display = (category === 'all' || card.dataset.cat === category) ? 'block' : 'none';
+        }
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
